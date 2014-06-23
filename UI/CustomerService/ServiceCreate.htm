@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        function showCustomer() {
+            var returnValue = window.showModalDialog("../publicPage/SelectCustomer.htm?data=" + Math.random(), "参数", "dialogWidth:400px;dialogHeight:220px;help:no");
+        }
+    </script>
+    <script src="../JS/jquery-1.4.1-vsdoc.js" type="text/javascript"></script>
+    <script src="../JS/json.js" type="text/javascript"></script>
+    <script language="javascript" type="text/javascript">
+        //加载显示所有的客户ID
+        $(function () {
+            $.ajax({
+                url: "../Service/CustomServicesServices.asmx/SelectCusID",
+                type: "post",
+                data: {},
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                    $.each(data.d, function (index, domEle) {
+                        var str = $("<option value='" + domEle.CusID + "'>" + domEle.CusName + "</option>");
+                        $("#CusID").append(str);
+                    });
+                }
+
+            });
+        });
+        //加载显示所有的服务类型
+        $(function () {
+            $.ajax({
+                url: "../Service/ServiceTypeSercive.asmx/Select",
+                type: "post",
+                data: {},
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                    $.each(data.d, function (index, domEle) {
+                        var str = $("<option value='" + domEle.STID + "'>" + domEle.STName + "</option>");
+                        $("#STID").append(str);
+                    });
+                }
+            });
+        });
+        //创建一个新的服务
+        $(function () {
+            $("#Add").click(function () {
+                //获得填写的值
+                var $STID = $("#STID").val(); //服务类型
+                var $CusID = $("#CusID").val(); //客户编号
+                var $CSTitle = $("#CSTitle").val(); //服务概要
+                var $CSDesc = $("#CSDesc").val(); //服务详情
+
+                var json = { STID: $STID, CusID: $CusID, CSTitle: $CSTitle, CSDesc: $CSDesc };
+                $.ajax({
+                    url: "../Service/CustomServicesServices.asmx/CreateService",
+                    type: "post",
+                    data: JSON.stringify({ c: json }),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        if (data.d != "0") {
+                            alert("创建成功");
+                            $("#STID").val("0");
+                            $("#CusID").val("0");
+                            $("#CSTitle").val("")
+                            $("#CSDesc").val("");
+                        } else {
+                            alert("抱歉,您还没有权限创建一个服务");
+                        }
+                    }
+                });
+
+            });
+        });
+    </script>
+</head>
+<body>
+<table class="tableEdit" style="width:600px;">
+        <thead>
+            <tr>
+                <td colspan="4">创建服务</td>
+            </tr>
+        </thead>
+        <tr>
+            <th>客户名称：</th>
+            <td>
+                <select id="CusID" style="width:100px">
+                    <option selected="selected" value="0">请选择</option>
+                </select></td>
+            <th>服务类型：</th>
+            <td>
+                <select id="STID" style="width:100px">
+                    <option selected="selected" value="0">请选择</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>服务概要：</th>
+            <td colspan="3">
+                <input type="text" id="CSTitle"/>
+             </td>
+        </tr>
+        <tr>
+            <th>详细信息：</th>
+            <td colspan="3">
+                <textarea id="CSDesc"></textarea>
+             </td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    <input type="button" id="Add" value="确定" />&nbsp;&nbsp;
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>

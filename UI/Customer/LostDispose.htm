@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/Style1.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/style3.css" rel="stylesheet" type="text/css" />
+    <script src="../JS/json.js" type="text/javascript"></script>
+    <script src="../JS/jquery-1.4.1.min.js" type="text/javascript"></script>
+</head>
+    <script language="javascript" type="text/javascript">
+        var clid = location.href.toString().substring(location.href.toString().indexOf("=") + 1);
+        $(function () {
+            $.ajax({
+                url: "../Service/ViewCustomLostsWebService.asmx/MeasursFindByCLID",
+                type: "post",
+                data: JSON.stringify({ clID: clid }),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                    $(".tableEdit tr:gt(0)").remove();
+                    data = data.d;
+                    $.each(data, function (index, item) {
+                        var $tr1 = $("<tr><th style='width:400px'>时间：" + item.MeDate + "</th></tr>");
+                        var $tr2 = $("<tr><td style='width:auto'>" + item.MeDesc + "</td></tr>");
+                        $(".tableEdit").append($tr1).append($tr2);
+                    });
+                    $(".tableEdit").append($tr1).append($tr2);
+                },
+                error: function () {
+                    alert("对不起！访问错误！");
+                    history.back();
+                    return;
+                }
+            });
+        });
+    </script>
+<body>
+    <div id="desDiv">
+        <span>流失处理</span><br />
+        记录对流失客户采取的措施信息
+    </div>
+    <table class="tableEdit">
+        <thead>
+            <tr>
+                <td colspan="2">客户流失查看（<span style="color:red">状态：客户流失</span>）</td>
+            </tr>
+            <tr>
+                <th colspan="2">流失原因： <br />
+                已购买其他公司产品
+                </th>
+             </tr>
+        </thead>
+
+        <tr>
+            <th>计划： 2011-5-16</th><th>执行：2011-5-22</th>
+        </tr>
+        <tr>
+            <td>电话联系，初步接触</td>
+            <td>已电话联系，有购买意向，进一步接触</td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="2">
+                    <input type="button" value="关闭"  onclick="window.parent.main.location.href='LostsPage.htm'" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>

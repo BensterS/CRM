@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/Style1.css" rel="stylesheet" type="text/css" />
+    <script src="../JS/json.js" type="text/javascript"></script>
+    <script src="../JS/jquery-1.4.1-vsdoc.js" type="text/javascript"></script>
+    <script language="javascript" type="text/javascript">
+        var pindex = 1; //当前行
+        var pcount = 1; //总条数
+        function show() {
+            $("#tab tr:gt(0)").remove();
+            $.ajax({
+                url: "../Service/CustomServicesServices.asmx/GetAll",
+                type: "post",
+                data: JSON.stringify({ PIndex: pindex, Types: "反馈" }),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                  //  alert(data);
+                    //return;
+                    pcount = data.d.pcount;
+                    $.each(data.d.list, function (index, domEle) {
+                        $("#sp").html(data.d.count + "条数据, 共" + data.d.pcount + "页，当前第" + data.d.pindex + "页，每页显示" + data.d.psize + "条数据");
+                        var $tr = $("<tr></tr>");
+                        var $td = $("<td>" + domEle.CusName + "</td>");
+                        var $td1 = $("<td>" + domEle.CSTitle + "</td>");
+                        var $td2 = $("<td>" + domEle.STName + "</td>");
+                        var $td3 = $("<td>" + domEle.CSCreateDate + "</td>");
+
+                        var $td4 = ""; //分配人
+                        $.each(data.d.users2, function (k, v) {
+                            if (domEle.CSDueID == v.UserID) {
+                                $td4 = "<td>" + v.UserName + "</td>";
+                            }
+                        });
+
+                        var $td5 = $("<td>" + domEle.CSDueDate + "</td>");
+                        $tr.append($td).append($td1).append($td2).append($td3).append($($td4)).append($td5);
+                        $tr.append("<td><input type='image' src='../images/bt_feedback.gif' onclick='showDispose(" + domEle.CSID + ")' /></td>");
+                        $("#tab").append($tr);
+                    });
+                    //共一页
+                    if (pcount == 1) {
+                        $("#btnFirst,#btnPre,#btnNext,#btnEnd").attr("disabled", "disabled");
+                    }
+                    else if (pindex == 1) {  //首页
+                        $("#btnFirst,#btnPre").attr("disabled", "disabled");
+                        $("#btnNext,#btnEnd").removeAttr("disabled");
+                    }
+                    else if (pindex == pcount) {  //末页
+                        $("#btnNext,#btnEnd").attr("disabled", "disabled");
+                        $("#btnFirst,#btnPre").removeAttr("disabled");
+                    }
+                    else {  //其他页
+                        $("#btnFirst,#btnPre,#btnNext,#btnEnd").removeAttr("disabled");
+                    }
+                }
+            });
+
+        }
+        //页面的加载事件
+        $(function () {
+            show(); //首页
+            $("#btnFirst").click(function () {
+                pindex = 1;
+                show();
+            }); //上页
+            $("#btnPre").click(function () {
+                pindex = pindex - 1;
+                show();
+            });
+
+            //下页
+            $("#btnNext").click(function () {
+                pindex = pindex + 1;
+                show();
+            });
+
+            //末页
+            $("#btnEnd").click(function () {
+                pindex = pcount;
+                show();
+            });
+            $("#tiao").click(function () {
+                var $index = $("#index2").val()
+                if (isNaN($index) == false) {
+                    if ($index > 0 && $index <= pcount) {
+                        pindex = $index;
+                        show();
+                    } else {
+                        alert("没有这一页");
+                    }
+                } else {
+                    alert("你输入的不是一个整数");
+                }
+            });
+        });
+
+        //模式窗口传值CSID进行显示与修改
+        function showDispose(CSID) {
+            var returnValue = window.showModalDialog("ServiceResultDialog.htm?data=" + Math.random(), CSID, "dialogWidth:550px;dialogHeight:350px;help:no");
+
+        }
+ </script>
+</head>
+<body>
+<div id="desDiv">
+    <span>服务反馈</span><br />
+    对于客户提出的咨询、建议、投诉等服务进行处理完毕后，记录客户对服务的结果的满意度等
+</div>
+<div id="dataDiv">
+    <div id="headDiv">
+    </div>
+    <table class="dataTable" id="tab";>
+        <tr>
+            <th>客户名称</th>
+            <th>概要</th>
+            <th>服务类型</th>
+            <th>创建时间</th>
+            <th>分配人</th>
+            <th>分配时间</th>
+            <th>处理</th>
+        </tr>
+        <tr>
+            <td>睿智数码</td>
+            <td>询问收音机订单运费承担方式</td>
+            <td>咨询</td>
+            <td>2011年5月1日</td>
+            <td>张三</td>
+            <td>2011年5月2日</td>
+            <td><input type="image" src="../images/bt_feedback.gif" onclick="showDispose()" /></td>
+        </tr>
+    </table>
+    <div id="pageDiv">
+        <div id="leftPage"><span id="sp"></span></div>
+        <div id="rightPage">
+            <input type="image" id="btnFirst" src="../images/first.gif" />&nbsp;&nbsp;
+                    <input type="image" id="btnPre" src="../images/back.gif" />&nbsp;&nbsp;
+                    <input type="image" id="btnNext" src="../images/next.gif" />&nbsp;&nbsp;
+                    <input type="image" id="btnEnd" src="../images/last.gif" />&nbsp;&nbsp; 转到第<input id="index2" type="text"
+                size="1" />&nbsp;&nbsp;<input type="image" id="tiao" src="../images/go.gif" />
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="CSS/left.css" rel="stylesheet" type="text/css" />
+    <script src="JS/jquery-1.4.1-vsdoc.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function() {
+            $(".menuDiv").click(function() {
+                $(this).next("div").slideToggle(300);
+            });
+        });
+    </script>
+</head>
+<body>
+<table cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="td1"></td>
+        <td id="td2">
+            <div id="div1">管理菜单
+            </div>
+            <div id="div2">
+                <!--菜单开始 -->
+                <!--父菜单 -->
+                <div class="menuDiv">营销管理</div>
+                <!--子菜单 -->
+                <div class="contentDiv" style="display:none">
+                    <div><img src="images/left.gif" /><a href="sale/salechance.htm" target="main">销售机会管理</a></div>
+                    <div><img src="images/left.gif" /><a href="Sale/SaleAllot.htm" target="main">销售机会分配</a></div>
+                    <div><img src="images/left.gif" /><a href="sale/saleManager.htm" target="main">客户开发计划</a></div>
+                </div>
+                <!--菜单结束 -->
+                <!--父菜单 -->
+                <div class="menuDiv">客户管理</div>
+                <!--子菜单 -->
+                <div class="contentDiv" style="display:none">
+                    <div><img src="images/left.gif" /><a href="Customer/CustomerPage.htm" target="main">客户信息管理</a></div>
+                    <div><img src="images/left.gif" /><a href="Customer/LostsPage.htm" target="main">客户流失管理</a></div>
+                </div>
+                <!--父菜单 -->
+                <div class="menuDiv">服务管理</div>
+                <!--子菜单 -->
+                <div class="contentDiv" style="display:none">
+                    <div><img src="images/left.gif" /><a href="CustomerService/ServiceCreate.htm" target="main">服务创建</a></div>
+                    <div><img src="images/left.gif" /><a href="CustomerService/ServiceAllot.htm" target="main">服务分配</a></div>
+                    <div><img src="images/left.gif" /><a href="CustomerService/ServiceDispose.htm" target="main">服务处理</a></div>
+                    <div><img src="images/left.gif" /><a href="CustomerService/ServiceResult.htm" target="main">服务反馈</a></div>
+                    <div><img src="images/left.gif" /><a href="CustomerService/serviceDetail.htm" target="main">服务归档</a></div>
+                </div>
+                <!--父菜单 -->
+                <div class="menuDiv">系统管理</div>
+                <!--子菜单 -->
+                <div class="contentDiv" style="display:none">
+                    <div><img src="images/left.gif" /><a href="SystemManager/userList.htm" target="main">用户管理</a></div>
+                    <div><img src="images/left.gif" /><a href="SystemManager/serviceList.htm" target="main">服务管理</a></div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

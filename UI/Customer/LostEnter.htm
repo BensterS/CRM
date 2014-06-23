@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <script src="../JS/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../JS/json.js" type="text/javascript"></script>
+</head>
+    <script language="javascript" type="text/javascript">
+        $(function () {
+            var clid = location.href.toString().substring(location.href.toString().indexOf("=") + 1);
+            $("#btnSubmit").click(function () {
+                $.ajax({
+                    url: "../Service/ViewCustomLostsWebService.asmx/CustomLostsSuccess",
+                    type: "post",
+                    data: JSON.stringify({ clid: clid, clReason: clReason.value }),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        if (data.d) {
+                            alert("填写成功");
+                            window.parent.main.location.href = 'LostsPage.htm';
+                        } else {
+                            alert("失败原因填写失败");
+                        }
+                    },
+                    error: function () {
+                        alert("对不起！访问错误！");
+                        history.back();
+                        return;
+                    }
+                });
+            });
+        });
+    </script>
+<body>
+<table class="tableEdit">
+                        <thead>
+                            <tr>
+                                <td colspan="2">客户流失确认</td>
+                            </tr>
+                        </thead>
+                        <tr>
+                        <th>流失原因：</th>
+                            <td>
+                                <textarea style="width:90%" id="clReason"></textarea>
+                            </td>
+                           </tr>
+                           <tfoot>
+            <tr>
+                <td colspan="4">
+                    <input type="button" value="确定" id="btnSubmit" />&nbsp;&nbsp;
+                    <input type="button" value="取消" onclick="window.parent.main.location.href='LostsPage.htm'"/>
+                </td>
+            </tr>
+        </tfoot>
+                    </table>
+</body>
+</html>

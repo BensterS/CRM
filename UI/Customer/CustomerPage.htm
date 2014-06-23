@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/Style4.css" rel="stylesheet" type="text/css" />
+    <script src="../JS/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../JS/json.js" type="text/javascript"></script>
+</head>
+    <script language="javascript" type="text/javascript">
+        var pgIndex = 1;
+        var pgSize = 8;
+        var pgCount = 1;
+        $(function () {
+            var ajax = function () {
+                $.ajax({
+                    url: "../Service/CustomerWebService.asmx/CustomersFindAll",
+                    type: "post",
+                    data: JSON.stringify({ pIndex: pgIndex, pSize: pgSize, cusName: "", cusid: "" }),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        $ajacLoad(data);
+                    },
+                    error: function () {
+                        alert("错误！");
+                        return;
+                    }
+                });
+
+                $("#btnQuery").click(function () {
+                    $.ajax({
+                        url: "../Service/CustomerWebService.asmx/CustomersFindAll",
+                        type: "post",
+                        data: JSON.stringify({ pIndex: pgIndex, pSize: pgSize, cusName: " and CusName like '%" + cusName.value + "%' ", cusid: " and CusID like '%" + cusid.value + "%' " }),
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (data) {
+                            $ajacLoad(data);
+                        },
+                        error: function () {
+                            alert("查询错误！");
+                            return;
+                        }
+                    });
+                });
+            }
+
+            ajax();
+
+            $("#pgIndex").click(function () {
+                pgIndex = 1;
+                ajax();
+            });
+            $("#pgUP").click(function () {
+                pgIndex -= 1;
+                ajax();
+            });
+            $("#pgDN").click(function () {
+                pgIndex += 1;
+                ajax();
+            });
+            $("#pgEnd").click(function () {
+                pgIndex = pgCount;
+                ajax();
+            });
+            $("#skip").click(function () {
+                pgIndex = $("#pageTXT").val();
+                ajax();
+            });
+        });
+
+        var $ajacLoad = function (data) {
+            $(".dataTable tr:gt(0)").remove();
+            data = data.d;
+            if (data != null) {
+                pgCount = data.pageCount;
+                pgIndex = data.pIndex;
+
+                $("#pgIndex,#pgUP,#pgDN,#pgEnd").attr("disabled", pgCount == 1 ? "disabled" : "");
+                $("#pgDN,#pgEnd").attr("disabled", pgIndex == pgCount ? "disabled" : "");
+                $("#pgIndex,#pgUP").attr("disabled", pgIndex == 1 ? "disabled" : "");
+
+                $.each(data.list, function (index, domEle) {
+                    var $tr = $("<tr></tr>");
+                    var $td1 = $("<td class='cusID'>" + domEle.CusID + "</td>");
+                    var $td2 = $("<td>" + domEle.CusName + "</td>");
+                    var $td3 = $("<td>" + domEle.CusDate + "</td>");
+                    var $td4 = $("<td>" + domEle.UserName + "</td>");
+                    var $td5 = $("<td></td>").append("<a href='CustomerEdit.htm?CusID=" + domEle.CusID + "'><img src='../images/33.gif' title='编辑' style='border:0px' /></a>");
+                    $($td5).append("<a href='LinkManPage.htm?CusID=" + domEle.CusID + "'><img src='../images/bt_plan.gif' title='联系人' style='border:0px' /></a>");
+                    $($td5).append("<a href='ActivitysPage.htm?CusID=" + domEle.CusID + "'><img src='../images/bt_acti.gif' title='交往记录' style='border:0px' /></a>");
+
+                    $tr.append($td1).append($td2).append($td3).append($td4).append($td5);
+                    $(".dataTable").append($tr);
+                });
+                $("#leftPage").html("共有" + data.count + "条记录，当前第" + pgIndex + "/" + pgCount + "页");
+            } else {
+                alert("数据查询错误！");
+                return;
+            }
+        }
+    </script>
+<body>
+    <div id="desDiv">
+        <span>客户信息管理</span><br />
+        维护客户信息，记录客户联系电话和交往记录
+    </div>
+    <table class="tableEdit">
+        <tr>
+            <th>
+                客户名称：
+            </th>
+            <td>
+                <input type="text" id="cusName"/>
+            </td>
+            <th>
+                客户编号：
+            </th>
+            <td>
+                <input type="text" id="cusid"/>
+            </td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="8">
+                    <input type="button" value="查询" id="btnQuery"/>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <br />
+            <table class="dataTable">
+                <tr>
+                    <th>
+                        客户编号
+                    </th>
+                    <th>
+                        客户名称
+                    </th>
+                    <th>
+                        建立时间
+                    </th>
+                    <th>
+                        客户经理
+                    </th>
+                    <th>
+                        操作
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        KH100101
+                    </td>
+                    <td>
+                        睿智数码
+                    </td>
+                    <td>
+                        2011年5月2日
+                    </td>
+                    <td>
+                        张三
+                    </td>
+                    <td>
+                        <a href="CustomerEdit.htm"><img src="../images/33.gif" title="编辑" style="border:0px" /></a>
+                        <a href="drainPage.htm"><img src="../images/bt_plan.gif" title="联系人" style="border:0px" /></a>
+                        <a href="ActivitysPage.htm"><img src="../images/bt_acti.gif" title="交往记录" style="border:0px" /></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        KH110511
+                    </td>
+                    <td>
+                        北京大学
+                    </td>
+                    <td>
+                        2011年5月2日
+                    </td>
+                    <td>
+                        张三
+                    </td>
+                    <td>
+                        <a href="CustomerEdit.htm"><img src="../images/33.gif" title="编辑" style="border:0px" /></a>
+                        <a href="drainPage.htm"><img src="../images/bt_plan.gif" title="联系人" style="border:0px" /></a>
+                        <a href="ActivitysPage.htm"><img src="../images/bt_acti.gif" title="交往记录" style="border:0px" /></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        KH090123
+                    </td>
+                    <td>
+                        清华大学
+                    </td>
+                    <td>
+                        2011年5月2日
+                    </td>
+                    <td>
+                        张三
+                    </td>
+                    <td>
+                        <a href="CustomerEdit.htm"><img src="../images/33.gif" title="编辑" style="border:0px" /></a>
+                        <a href="drainPage.htm"><img src="../images/bt_plan.gif" title="联系人" style="border:0px" /></a>
+                        <a href="ActivitysPage.htm"><img src="../images/bt_acti.gif" title="交往记录" style="border:0px" /></a>
+                    </td>
+                </tr>
+            </table>
+            <div id="pageDiv">
+                <div id="leftPage"></div>
+                <div id="rightPage">
+                    <input type="image" id="pgIndex" src="../images/first.gif" />&nbsp;&nbsp;
+                    <input type="image" id="pgUP" src="../images/back.gif" />&nbsp;&nbsp;
+                    <input type="image" id="pgDN" src="../images/next.gif" />&nbsp;&nbsp;
+                    <input type="image" id="pgEnd" src="../images/last.gif" />&nbsp;&nbsp;
+                    转到第<input type="text" id="pageTXT" size="1" />&nbsp;&nbsp;<input type="image" id="skip" src="../images/go.gif" />
+                </div>
+            </div>
+</body>
+</html>

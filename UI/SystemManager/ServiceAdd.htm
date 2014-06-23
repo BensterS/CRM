@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        function showCustomer() {
+            var returnValue = window.showModalDialog("../publicPage/SelectCustomer.htm?data=" + Math.random(), "参数", "dialogWidth:400px;dialogHeight:220px;help:no");
+        }
+    </script>
+    <style type="text/css">
+        #Select1
+        {
+            width: 181px;
+        }
+    </style>
+</head>
+<body>
+<table class="tableEdit" style="width:600px;">
+        <thead>
+            <tr>
+                <td colspan="2">新增服务</td>
+            </tr>
+        </thead>
+        <tr>
+            <th>服务名：</th>
+            <td>
+                <input type="text" />
+             </td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="2">
+                    <input type="button" value="确定" />&nbsp;&nbsp;
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>

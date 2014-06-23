@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../DatePicker/WdatePicker.js"></script>
+    <script src="../JS/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../JS/json.js" type="text/javascript"></script>
+</head>
+<script language="javascript" type="text/javascript">
+    var actID = location.href.toString().substring(location.href.toString().indexOf("=") + 1);
+    $(function () {
+        if (parseInt(actID).toString() == "NaN") {
+            $submit("../Service/ActivitysWebService.asmx/ActivitysAdd");
+        }
+        else {
+            $.ajax({
+                url: "../Service/ActivitysWebService.asmx/ActivityFindByACTID",
+                type: "post",
+                data: JSON.stringify({ actID: actID }),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                    data = data.d;
+                    var reg = new RegExp("/", "g");
+                    actDate.value = data.ActDate.substring(0, data.ActDate.indexOf("星期") - 1).replace(reg, "-");
+                    actAdd.value = data.ActAdd;
+                    actTitle.value = data.ActTitle;
+                    actMemo.value = data.ActMemo;
+                    actDesc.value = data.ActDesc;
+                    $submit("../Service/ActivitysWebService.asmx/ActivitysEdit");
+                },
+                error: function () {
+                    alert("数据加载失败！");
+                    return;
+                }
+            });
+        }
+    });
+    var $submit = function (url) {
+        $("#btnSubmit").click(function () {
+            var $btn = $(this);
+            $.ajax({
+                url: url,
+                type: "post",
+                data: JSON.stringify({ obj:
+                                    {
+                                        __type: "Model.Activitys",
+                                        ActDate: actDate.value,
+                                        ActAdd: actAdd.value,
+                                        ActTitle: actTitle.value,
+                                        ActMemo: actMemo.value,
+                                        ActDesc: actDesc.value,
+                                        CusID: (parseInt(actID).toString() == "NaN" ? actID : ""),
+                                        ActID: (parseInt(actID).toString() == "NaN" ? 0 : actID)
+                                    }
+                }),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                    if (data.d) {
+                        if (parseInt(actID).toString() == "NaN") {
+                            alert("添加成功");
+                            window.parent.main.location.href = "ActivitysPage.htm?cusID=" + actID;
+                        }
+                        else {
+                            alert("修改成功");
+                            window.parent.main.location.href = "CustomerPage.htm";
+                        }
+                    }
+                    else {
+                        alert("失败");
+                    }
+                },
+                error: function () {
+                    alert("数据修改错误！");
+                    return;
+                }
+            });
+        });
+    }
+</script>
+<body>
+<table class="tableEdit">
+        <thead>
+            <tr>
+                <td colspan="4">编辑客户来往记录</td>
+            </tr>
+        </thead>
+        <tr>
+            <th>交往时间：</th>
+            <td>
+                <input type="text" onclick="WdatePicker()" id="actDate"/></td>
+            <th>交往地点：</th>
+            <td>
+                <input type="text" id="actAdd"/>
+            </td>
+        </tr>
+        <tr>
+            <th>概要：</th>
+            <td><input type="text" id="actTitle" /></td>
+            <th>备注：</th>
+            <td><input type="text" id="actMemo" /></td>
+        </tr>
+        <tr>
+            <th>详细描述：</th>
+            <td colspan="3"><textarea id="actDesc" rows="20"></textarea></td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    <input type="button" id="btnSubmit" value="确定" />&nbsp;&nbsp;
+                    <input type="button" value="关闭" onclick="window.parent.main.location.href='CustomerPage.htm'" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>

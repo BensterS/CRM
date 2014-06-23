@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <script src="../JS/jquery-1.4.1-vsdoc.js" type="text/javascript"></script>
+    <script src="../JS/json.js" type="text/javascript"></script>
+    <script language="javascript" type="text/javascript">
+        //页面加载显示相关信息
+        $(function () {
+            var CSID = window.dialogArguments; ;  //获得客户服务处理ID
+            $.ajax({
+                url: "../Service/CustomServicesServices.asmx/SelectById",
+                type: "post",
+                data: JSON.stringify({ CSID: CSID }),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                    if (data.d != null) {
+                        $("#CusID").text(data.d.CusID);
+                        $("#STName").text(data.d.STName);
+                        $("#CSCreateDate").text(data.d.CSCreateDate);
+                        $("#UserName").text(data.d.UserName);
+                        $("#CSTitle").text(data.d.CSTitle);
+                        $("#CSDesc").text(data.d.CSDesc);
+                        $("#CSDeal").text(data.d.CSDeal);
+                        $("#CSDealDate").text(data.d.CSDealDate);
+                        $("#CSDueID").text(data.d.CSDueID);
+                        $("#CSResult").text(data.d.CSResult);
+                        $("#CSSatisfy").text(data.d.CSSatisfy + "分");
+                    } else {
+                        alert("抱歉你还没有该权限，请联系管理员");
+                        window.close();
+                    }
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<table class="tableEdit" style="width:500px;">
+        <thead>
+            <tr>
+                <td colspan="4">服务信息</td>
+            </tr>
+        </thead>
+        <tr>
+            <th>客户编号：</th>
+            <td>
+               <span id="CusID"></span></td>
+            <th>服务类型：</th>
+            <td>
+                <span id="STName"></span>
+            </td>
+        </tr>
+        <tr>
+            <th>创建时候：</th>
+            <td><span id="CSCreateDate"></span>
+               </td>
+            <th>创建人：</th>
+            <td>
+               <span id="UserName"></span>
+            </td>
+        </tr>
+        <tr>
+            <th>服务概要：</th>
+            <td colspan="3">
+               <span id="CSTitle"></span>
+             </td>
+        </tr>
+        <tr>
+            <th>详细信息：</th>
+            <td colspan="3">
+                <span id="CSDesc"></span>
+             </td>
+        </tr>
+    </table>
+ <table class="tableEdit" style="width:500px;">
+        <thead>
+            <tr>
+                <td colspan="4">服务处理</td>
+            </tr>
+        </thead>
+        <tr>
+            <th>处理时间：</th>
+            <td>
+               <span id="CSDealDate"></span></td>
+            <th>处理人：</th>
+            <td>
+               <span id="CSDueID"></span>
+            </td>
+        </tr>
+        <tr>
+            <th>服务处理：</th>
+            <td colspan="3">
+                <span id="CSDeal"></span>
+             </td>
+        </tr>
+    </table>
+    <table class="tableEdit" style="width:500px;">
+        <thead>
+            <tr>
+                <td colspan="4">服务反馈</td>
+            </tr>
+        </thead>
+        <tr>
+            <th>处理结果：</th>
+            <td>
+                <span id="CSResult"></span>
+             </td>
+            <th>满意度：</th>
+            <td>
+             <span id="CSSatisfy"></span>
+            </td>
+        </tr>
+        
+    </table>
+</body>
+</html>

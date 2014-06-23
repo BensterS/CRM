@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title></title>
+    <link href="../CSS/style3.css" rel="stylesheet" type="text/css" />
+    <link href="../CSS/Style1.css" rel="stylesheet" type="text/css" />
+    <script src="../JS/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../JS/json.js" type="text/javascript"></script>
+</head>
+    <script language="javascript" type="text/javascript">
+        $(function () {
+            var chanId = location.href.toString().substring(location.href.toString().indexOf("=") + 1);
+            var pgIndex = 1;
+            var pgSize = 3;
+            var pgCount = 1;
+            $.ajax({
+                url: "../Service/PlansWebService.asmx/PlansFindAll",
+                type: "post",
+                data: JSON.stringify({ chanId: chanId, pIndex: pgIndex, pSize: pgSize }),
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                    $(".tableEdit tr:gt(0)").remove();
+                    data = data.d;
+                    data.list = data.list[0];
+                    //alert(data);
+                    if (data.list != null && data.list != "") {
+                        pgCount = data.pageCount;
+                        pgIndex = data.pIndex;
+                        $("#pgIndex,#pgUP,#pgDN,#pgEnd").attr("disabled", pgCount == 1 ? "disabled" : "");
+                        $("#pgDN,#pgEnd").attr("disabled", pgIndex == pgCount ? "disabled" : "");
+                        $("#pgIndex,#pgUP").attr("disabled", pgIndex == 1 ? "disabled" : "");
+
+                        var $tr1 = $("<tr></tr>");
+                        $tr1.append("<th colspan='2'>失败原因：<br />" + data.list.ChanError + "</th>");
+                        var $tr2 = $("<tr></tr>");
+                        $tr2.append("<th>计划：" + data.list.PlanDate + "</th>").append("<th>执行：" + data.list.PlanResultDate + "</th>");
+                        var $tr3 = $("<tr></tr>");
+                        $tr3.append("<td>" + data.list.PlanContent + "</td>").append("<td>" + data.list.PlanResult + "</td>");
+                        $(".tableEdit").append($tr1).append($tr2).append($tr3);
+                        $("#leftPage").html("共有" + data.count + "条记录，当前第" + pgIndex + "/" + pgCount + "页");
+                    }
+                    else {
+                        alert("对不起，没有计划，请添加！");
+                        history.back();
+                    }
+                },
+                error: function () {
+                    alert("对不起！访问错误！");
+                    history.back();
+                    return;
+                }
+            });
+            $("#pgIndex").click(function () {
+                pgIndex = 1;
+                $loadAjax();
+            });
+            $("#pgUP").click(function () {
+                pgIndex -= 1;
+                $loadAjax();
+            });
+            $("#pgDN").click(function () {
+                pgIndex += 1;
+                $loadAjax();
+            });
+            $("#pgEnd").click(function () {
+                pgIndex = pgCount;
+                $loadAjax();
+            });
+            $("#skip").click(function () {
+                pgIndex = $("#pageTXT").val();
+                $loadAjax();
+            });
+        });
+    </script>
+<body>
+<table class="tableEdit">
+        <thead>
+            <tr>
+                <td colspan="2">开发计划查看（<span style="color:red">状态：开发失败</span>）</td>
+            </tr>
+        </thead>
+        <tr>
+            <th colspan="2">失败原因： <br />
+            已购买其他公司产品
+            </th>
+        </tr>
+        <tr>
+            <th>计划： 2011-5-16</th><th>执行：2011-5-22</th>
+        </tr>
+        <tr>
+            <td>电话联系，初步接触</td>
+            <td>已电话联系，有购买意向，进一步接触</td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="2">
+                    <input type="button" value="关闭" onclick="javascript:history.back();" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    <div id="pageDiv" style="width: 90.5%;">
+        <div id="leftPage"></div>
+        <div id="rightPage">
+            <input type="image" id="pgIndex" src="../images/first.gif" />&nbsp;&nbsp;
+            <input type="image" id="pgUP" src="../images/back.gif" />&nbsp;&nbsp;
+            <input type="image" id="pgDN" src="../images/next.gif" />&nbsp;&nbsp;
+            <input type="image" id="pgEnd" src="../images/last.gif" />&nbsp;&nbsp;
+            转到第<input type="text" id="pageTXT" size="1" />&nbsp;&nbsp;<input type="image" id="skip" src="../images/go.gif" />
+        </div>
+    </div>
+</body>
+</html>

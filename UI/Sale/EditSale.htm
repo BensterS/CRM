@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <link href="../CSS/style2.css" rel="stylesheet" type="text/css" />
+    <script src="../JS/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script src="../JS/json.js" type="text/javascript"></script>
+</head>
+    <script language="javascript" type="text/javascript">
+        $(function () {
+            var chanId = location.href.toString().substring(location.href.toString().indexOf("=") + 1);
+            if (parseInt(chanId).toString() == "NaN") {
+                $(".submit").click(function () {
+                    $.ajax({
+                        url: "../Service/ChancesWebService.asmx/ChancesAddNew",
+                        type: "post",
+                        data: JSON.stringify({ obj:
+                                {
+                                    ChanID: 0,
+                                    ChanName: $("#chanName").val(),
+                                    ChanRate: $("#chanRate").val(),
+                                    ChanLinkMan: $("#chanLinkMan").val(),
+                                    ChanLinkTel: $("#chanLinkTel").val(),
+                                    ChanTitle: $("#chanTitle").val(),
+                                    ChanDesc: $("#chanDesc").val(),
+                                    ChanCreateMan: 0,
+                                    ChanCreateDate: "",
+                                    ChanDueMan: 1,
+                                    ChanDueDate: "",
+                                    ChanState: 1,
+                                    ChanError: ""
+                                }
+                        }),
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (data) {
+                            data = data.d;
+                            if (data == 1) {
+                                alert("添加成功");
+                                if ($(".submit").val() == "确定并返回") {
+                                    window.parent.main.location.href = "SaleChance.htm"
+                                } else {
+                                    window.location.reload();
+                                }
+                                //$btn.val() == "确定并返回" ? window.parent.main.location.href = "EditSale.htm" : location.reload();
+                            } else {
+                                alert("添加失败");
+                            }
+                        },
+                        error: function () {
+                            alert("数据查询错误！");
+                            return;
+                        }
+                    });
+                });
+            } else {
+                $.ajax({
+                    url: "../Service/ChancesWebService.asmx/ChancesFindById",
+                    type: "post",
+                    data: JSON.stringify({ chanId: chanId }),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        data = data.d;
+                        $("#chanName").val(data.ChanName);
+                        $("#chanRate").val(data.ChanRate);
+                        $("#chanLinkMan").val(data.ChanLinkMan);
+                        $("#chanLinkTel").val(data.ChanLinkTel);
+                        $("#chanTitle").val(data.ChanTitle);
+                        $("#chanDesc").val(data.ChanDesc);
+                    },
+                    error: function () {
+                        alert("数据加载失败！");
+                        return;
+                    }
+                });
+                $(".submit").click(function () {
+                    var $btn = $(this);
+                    $.ajax({
+                        url: "../Service/ChancesWebService.asmx/ChancesEdit",
+                        type: "post",
+                        data: JSON.stringify({ obj:
+                                    {
+                                        ChanID: chanId,
+                                        ChanName: $("#chanName").val(),
+                                        ChanRate: $("#chanRate").val(),
+                                        ChanLinkMan: $("#chanLinkMan").val(),
+                                        ChanLinkTel: $("#chanLinkTel").val(),
+                                        ChanTitle: $("#chanTitle").val(),
+                                        ChanDesc: $("#chanDesc").val(),
+                                        ChanCreateMan: 0,
+                                        ChanCreateDate: "",
+                                        ChanDueMan: 1,
+                                        ChanDueDate: "",
+                                        ChanState: 1,
+                                        ChanError: ""
+                                    }
+                        }),
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (data) {
+                            data = data.d;
+                            if (data == 1) {
+                                alert("修改成功");
+                                if ($($btn).val() == "确定并返回") {
+                                    window.parent.main.location.href = "SaleChance.htm"
+                                } else {
+                                    window.location.reload();
+                                }
+                            } else {
+                                alert("修改失败");
+                            }
+                        },
+                        error: function () {
+                            alert("数据修改错误！");
+                            return;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+<body>
+    <table class="tableEdit">
+        <thead>
+            <tr>
+                <td colspan="4">
+                    销售机会添加
+                </td>
+            </tr>
+        </thead>
+        <tr>
+            <th>
+                客户名称：
+            </th>
+            <td>
+                <input type="text" id="chanName"/>
+            </td>
+            <th>
+                成功几率：
+            </th>
+            <td>
+                <select id="chanRate">
+                    <option value="10">100%</option>
+                    <option value="9">90%</option>
+                    <option value="8">80%</option>
+                    <option value="7">70%</option>
+                    <option value="6">60%</option>
+                    <option value="5">50%</option>
+                    <option value="4">40%</option>
+                    <option value="3">30%</option>
+                    <option value="2">20%</option>
+                    <option value="1">10%</option>
+                    <option value="0">0%</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                联系人：
+            </th>
+            <td>
+                <input type="text" id="chanLinkMan"/>
+            </td>
+            <th>
+                联系电话：
+            </th>
+            <td>
+                <input type="text" id="chanLinkTel"/>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                概要：
+            </th>
+            <td colspan="3">
+                <input type="text" style="width: 300px" id="chanTitle"/>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                机会描述：
+            </th>
+            <td colspan="3">
+                <textarea rows="20" cols="30" id="chanDesc"></textarea>
+            </td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="4">
+                    <input type="button" class="submit" value="确定并返回" />&nbsp;&nbsp;
+                    <input type="button" class="submit" value="确定并继续" />
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>
